@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.js"></script>
+        <script src="https://fb.me/react-15.2.1.js"></script>
+        <script src="https://fb.me/react-dom-15.2.1.js"></script>
+        
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <title>My First React File</title>
+        
+    </head>
+    <body>
+        <div id='react-container'></div>
+        <script type="text/babel">
+            var CheckBox = React.createClass({
+                getInitialState() {
+                    return { editing: false}; 
+                },
+                edit() {
+                    this.setState({editing: true});  
+                },
+                save() {
+                    // TODO: save this value
+                    var val = this.refs.newText.value;
+                    alert(val);
+                    this.setState({editing: false});
+                },
+                handleCheck() {
+                    this.setState({checked: !this.state.checked}); 
+                },
+                renderForm() {
+                    return (
+                        <div className="note">
+                            <form>
+                                <textarea ref="newText"></textarea>
+                                <button onClick={this.save}>Save</button>
+                            </form>
+                        </div>
+                    );
+                },
+                renderDisplay() {
+                    return (
+                        <div className="note">
+                            <p>{this.props.children}</p>
+                            <span>
+                                <button onClick={this.edit}>Edit</button>
+                                <button>Remove</button>
+                            </span>
+                        </div>
+                    );                        
+                },
+                render() {
+                    return (this.state.editing) ? this.renderForm() : this.renderDisplay();
+                }    
+            });
+            
+            ReactDOM.render(<CheckBox></CheckBox>, document.getElementById('react-container'));
+        </script>
+
+    </body>
+</html>
