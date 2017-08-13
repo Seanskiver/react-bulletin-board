@@ -12,6 +12,28 @@
     <body>
         <div id='react-container'></div>
         <script type="text/babel">
+            var Board = React.createClass({
+                propTypes : {
+                    count: function(props, propName) {
+                        if ( typeof(props[propName]) !== 'number' ) {
+                            throw new Error("the count must be a number");
+                        }
+                        
+                        if (props[propName] > 100) {
+                            throw new Error ("Creating " + props[propName] +" notes is ridiculous")
+                        }
+                    }
+                },
+                render() {
+                    return (
+                        <div className="board">
+                            {this.props.count}
+                        </div>
+                    );                    
+                }
+
+            });
+        
             var CheckBox = React.createClass({
                 getInitialState() {
                     return { editing: false}; 
@@ -54,7 +76,8 @@
                 }    
             });
             
-            ReactDOM.render(<CheckBox></CheckBox>, document.getElementById('react-container'));
+            // ReactDOM.render(<CheckBox></CheckBox>, document.getElementById('react-container'));
+            ReactDOM.render(<Board count={5000} />, document.getElementById('react-container'));
         </script>
 
     </body>
