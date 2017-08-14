@@ -12,7 +12,10 @@
     <body>
         <div id='react-container'></div>
         <script type="text/babel">
+            /****************** BOARD CLASS **************/
             var Board = React.createClass({
+                
+                // Validates property types
                 propTypes : {
                     count: function(props, propName) {
                         if ( typeof(props[propName]) !== 'number' ) {
@@ -24,28 +27,90 @@
                         }
                     }
                 },
+                // initialize notes array
+                getInitialState() {
+                    return {
+                        notes: []                        
+                    }
+                },
+                
+                // either initializes or increments the uniqueId variable
+                nextId() {
+                    this.uniqueId = this.uniqueId || 0;
+                    return this.uniqueId++;
+                },
+                // Add note
+                add(text) {
+                    // sets notes equal to the notes array plus new note
+                    var notes = [
+                        ...this.state.notes,
+                        {
+                            id: this.nextId(),
+                            note: text
+                        }
+                    ];
+                    // sets notes to state
+                    this.setState({notes});
+                },
+                // Update
+                update(newText, id) {
+                    // loop through array
+                    var notes = this.state.notes.map(
+                        // if this note's id isnt equal to id
+                        note => (note.id !== id) ? note : 
+                            {
+                                ...note, // Set id to whatever it was originally
+                                note: newText // Set new text
+                            }
+                    );
+                    
+                    this.setState({notes});
+                },
+                remove(id) {
+                    var notes = this.state.notes.filter(note => note.id !== id)
+                    this.setState({notes});
+                },
+                eachNote(note) {
+                    return (<Note key={note.id} 
+                                id={note.id}
+                                onChange={this.update}
+                                onRemove={this.remove}
+                            >   {note.id}<br/>
+                                {note.note}
+                            </Note>
+                    );
+                },
                 render() {
                     return (
                         <div className="board">
-                            {this.props.count}
+                            {this.state.notes.map(this.eachNote)}
+                            <button onClick={() => this.add()}>+</button>
                         </div>
                     );                    
                 }
 
             });
-        
-            var CheckBox = React.createClass({
+            /****************** /BOARD CLASS **************/
+            
+            
+            /****************** NOTE CLASS **************/
+            var Note = React.createClass({
+                // initialize note as normal (not being edited)
                 getInitialState() {
                     return { editing: false}; 
                 },
+                // set edit mode to true, alling the renderForm function
                 edit() {
                     this.setState({editing: true});  
                 },
                 save() {
-                    // TODO: save this value
-                    var val = this.refs.newText.value;
-                    alert(val);
+                    // calls the onChange method, which calls Board.update
+                    this.props.onChange(this.refs.newText.value, this.props.id);
+                    // change editing to false because we're done editing
                     this.setState({editing: false});
+                },
+                remove() {
+                    this.props.onRemove(this.props.id);  
                 },
                 handleCheck() {
                     this.setState({checked: !this.state.checked}); 
@@ -75,9 +140,11 @@
                     return (this.state.editing) ? this.renderForm() : this.renderDisplay();
                 }    
             });
+            /****************** /NOTE CLASS **************/
             
+            // Controller
             // ReactDOM.render(<CheckBox></CheckBox>, document.getElementById('react-container'));
-            ReactDOM.render(<Board count={5000} />, document.getElementById('react-container'));
+            ReactDOM.render(<Board count={10} />, document.getElementById('react-container'));
         </script>
 
     </body>
